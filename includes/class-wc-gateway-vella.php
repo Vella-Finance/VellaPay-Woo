@@ -61,7 +61,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 	public $test_secret_key;
 
 	/**
-	 * Should Paystack split payment be enabled.
+	 * Should Vella split payment be enabled.
 	 *
 	 * @var bool
 	 */
@@ -283,7 +283,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 	}
 
 	/**
-	 * Display paystack payment icon.
+	 * Display Vella payment icon.
 	 */
 	public function get_icon()
 	{
@@ -298,7 +298,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 	}
 
 	/**
-	 * Check if Paystack merchant details is filled.
+	 * Check if Vella merchant details is filled.
 	 */
 	public function admin_notices()
 	{
@@ -315,7 +315,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 	}
 
 	/**
-	 * Check if Paystack gateway is enabled.
+	 * Check if Vella gateway is enabled.
 	 *
 	 * @return bool
 	 */
@@ -352,7 +352,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 		</h2>
 
 		<!-- <h4>
-			<strong><?php printf(__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'woo-vella-pay'), 'https://dashboard.paystack.co/#/settings/developer', WC()->api_request_url('Tbz_WC_Vella_Webhook')); ?></strong>
+			<strong><?php printf(__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'woo-vella-pay'), 'https://app.vella.finance', WC()->api_request_url('Tbz_WC_Vella_Webhook')); ?></strong>
 		</h4> -->
 
 		<?php
@@ -409,18 +409,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 				'default'     => 'yes',
 				'desc_tip'    => true,
 			),
-			/* 'payment_page'                     => array(
-				'title'       => __( 'Payment Option', 'woo-vella-pay' ),
-				'type'        => 'select',
-				'description' => __( 'Popup shows the payment popup on the page while Redirect will redirect the customer to Paystack to make payment.', 'woo-vella-pay' ),
-				'default'     => '',
-				'desc_tip'    => false,
-				'options'     => array(
-					''          => __( 'Select One', 'woo-vella-pay' ),
-					'inline'    => __( 'Popup', 'woo-vella-pay' ),
-					'redirect'  => __( 'Redirect', 'woo-vella-pay' ),
-				),
-			), */
+			
 			'currency'                     => array(
 				'title'       => __('Currency', 'woo-vella-pay'),
 				'type'        => 'select',
@@ -453,18 +442,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 				'description' => __('Enter your Vella Tag here.', 'woo-vella-pay'),
 				'default'     => '',
 			),
-			/* 'live_secret_key'                  => array(
-				'title'       => __( 'Live Secret Key', 'woo-vella-pay' ),
-				'type'        => 'text',
-				'description' => __( 'Enter your Live Secret Key here.', 'woo-vella-pay' ),
-				'default'     => '',
-			),
-			'live_public_key'                  => array(
-				'title'       => __( 'Live Public Key', 'woo-vella-pay' ),
-				'type'        => 'text',
-				'description' => __( 'Enter your Live Public Key here.', 'woo-vella-pay' ),
-				'default'     => '',
-			), */
+			
 			'autocomplete_order'               => array(
 				'title'       => __('Autocomplete Order After Payment', 'woo-vella-pay'),
 				'label'       => __('Autocomplete Order', 'woo-vella-pay'),
@@ -481,70 +459,10 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 				'description' => '',
 				'default'     => 'no',
 			),
-			/*'split_payment'                    => array(
-				'title'       => __( 'Split Payment', 'woo-vella-pay' ),
-				'label'       => __( 'Enable Split Payment', 'woo-vella-pay' ),
-				'type'        => 'checkbox',
-				'description' => '',
-				'class'       => 'woocommerce_paystack_split_payment',
-				'default'     => 'no',
-				'desc_tip'    => true,
-			),
-			'subaccount_code'                  => array(
-				'title'       => __( 'Subaccount Code', 'woo-vella-pay' ),
-				'type'        => 'text',
-				'description' => __( 'Enter the subaccount code here.', 'woo-vella-pay' ),
-				'class'       => 'woocommerce_paystack_subaccount_code',
-				'default'     => '',
-			),
-			'split_payment_transaction_charge' => array(
-				'title'             => __( 'Split Payment Transaction Charge', 'woo-vella-pay' ),
-				'type'              => 'number',
-				'description'       => __( 'A flat fee to charge the subaccount for this transaction, in Naira (&#8358;). This overrides the split percentage set when the subaccount was created. Ideally, you will need to use this if you are splitting in flat rates (since subaccount creation only allows for percentage split). e.g. 100 for a &#8358;100 flat fee.', 'woo-vella-pay' ),
-				'class'             => __( 'woocommerce_paystack_split_payment_transaction_charge', 'woo-vella-pay' ),
-				'default'           => '',
-				'custom_attributes' => array(
-					'min'  => 1,
-					'step' => 0.1,
-				),
-				'desc_tip'          => false,
-			),
-			'split_payment_charge_account'     => array(
-				'title'       => __( 'Paystack Charges Bearer', 'woo-vella-pay' ),
-				'type'        => 'select',
-				'description' => __( 'Who bears Paystack charges?', 'woo-vella-pay' ),
-				'class'       => 'woocommerce_paystack_split_payment_charge_account',
-				'default'     => '',
-				'desc_tip'    => false,
-				'options'     => array(
-					''           => __( 'Select One', 'woo-vella-pay' ),
-					'account'    => __( 'Account', 'woo-vella-pay' ),
-					'subaccount' => __( 'Subaccount', 'woo-vella-pay' ),
-				),
-			),
-			'custom_gateways'                  => array(
-				'title'       => __( 'Additional Paystack Gateways', 'woo-vella-pay' ),
-				'type'        => 'select',
-				'description' => __( 'Create additional custom Paystack based gateways. This allows you to create additional Paystack gateways using custom filters. You can create a gateway that accepts only verve cards, a gateway that accepts only bank payment, a gateway that accepts a specific bank issued cards.', 'woo-vella-pay' ),
-				'default'     => '',
-				'desc_tip'    => true,
-				'options'     => array(
-					''  => __( 'Select One', 'woo-vella-pay' ),
-					'1' => __( '1 gateway', 'woo-vella-pay' ),
-					'2' => __( '2 gateways', 'woo-vella-pay' ),
-					'3' => __( '3 gateways', 'woo-vella-pay' ),
-					'4' => __( '4 gateways', 'woo-vella-pay' ),
-					'5' => __( '5 gateways', 'woo-vella-pay' ),
-				),
-			),
-			'saved_cards'                      => array(
-				'title'       => __( 'Saved Cards', 'woo-vella-pay' ),
-				'label'       => __( 'Enable Payment via Saved Cards', 'woo-vella-pay' ),
-				'type'        => 'checkbox',
-				'description' => __( 'If enabled, users will be able to pay with a saved card during checkout. Card details are saved on Paystack servers, not on your store.<br>Note that you need to have a valid SSL certificate installed.', 'woo-vella-pay' ),
-				'default'     => 'no',
-				'desc_tip'    => true,
-			),
+			/*
+			
+			
+			
 			'custom_metadata'                  => array(
 				'title'       => __('Custom Metadata', 'woo-vella-pay'),
 				'label'       => __('Enable Custom Metadata', 'woo-vella-pay'),
@@ -637,9 +555,9 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 			echo wpautop(wptexturize($this->description));
 		}
 
-		/* if (!is_ssl()) {
+		if (!is_ssl()) {
 			return;
-		} */
+		} 
 
 		if ($this->supports('tokenization') && is_checkout() && $this->saved_cards && is_user_logged_in()) {
 			$this->tokenization_script();
@@ -693,14 +611,11 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 		wp_register_style( 'vella-css', plugins_url('css/vella.css', WC_VELLA_PAY_MAIN_FILE) );
 		wp_enqueue_style( 'vella-css' );
 
-		//wp_enqueue_script('vella-module', 'https://checkout.vella.finance/widget/sdk.js', true);
+		
 		echo '<script type="module" src="https://checkout.vella.finance/widget/sdk.js"></script>';
 		wp_enqueue_script('wc_vella', plugins_url('js/vella.js', WC_VELLA_PAY_MAIN_FILE));
 
-		//add_filter('script_loader_tag', 'add_vella_module', 10, 3);
-		//
-		///wp_enqueue_script( 'wc_vella', plugins_url( 'assets/js/paystack' . $suffix . '.js', WC_PAYSTACK_MAIN_FILE ), array( 'jquery', 'vella' ), WC_PAYSTACK_VERSION, false );
-
+		
 		$vella_params = array(
 			'key' => $this->public_key,
 		);
@@ -915,7 +830,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 
 				if ($vella_response->data->status == "Success" || $vella_response->data->status == "Completed") {
 
-					//$order_details = explode('_', $paystack_response->data->reference);
+			
 
 					$order = wc_get_order($order_id);
 
@@ -1020,7 +935,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 	}
 
 	/**
-	 * Get custom fields to pass to Paystack.
+	 * Get custom fields to pass to Vella.
 	 *
 	 * @param int $order_id WC Order ID
 	 *
