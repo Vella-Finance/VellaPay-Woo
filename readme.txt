@@ -1,4 +1,4 @@
-=== VellaPay WooCommerce Payment Gateway ===
+=== VellaPay Payment Gateway ===
 Contributors: fujah
 Donate link: https://me.vella.finance/link/fujahgabriel
 Tags: vella, vella pay, woocommerce, payment gateway, fujah plugins, crypto, ghana, kenya, nigeria, south africa, naira, cedi, btc,usdt,usdc, mastercard, visa

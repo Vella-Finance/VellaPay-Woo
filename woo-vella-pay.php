@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: VellaPay WooCommerce Payment Gateway
+ * Plugin Name: VellaPay Payment Gateway
  * Plugin URI: https://vella.finance
- * Description: WooCommerce payment gateway for Vella
+ * Description: Receive payment on your store with VellaPay
  * Version: 0.1.0
  * Author: Gabriel Ajenifuja
  * Author URI: https://fujahgabriel.disha.page/
@@ -25,7 +25,7 @@ define('WC_VELLA_PAY_URL', untrailingslashit(plugins_url('/', __FILE__)));
 define('WC_VELLA_PAY_VERSION', '0.1.0');
 
 /**
- * Initialize Vella WooCommerce payment gateway.
+ * Initialize Vella payment gateway.
  */
 function vch_wc_vella_init()
 {
@@ -56,7 +56,7 @@ function vch_woo_vella_plugin_action_links($links)
 {
 
 	$settings_link = array(
-		'settings' => '<a href="' . admin_url('admin.php?page=wc-settings&tab=checkout&section=vella') . '" title="' . __('View VellaPay WooCommerce Settings', 'woo-vella-pay') . '">' . __('Settings', 'woo-vella-pay') . '</a>',
+		'settings' => '<a href="' . admin_url('admin.php?page=wc-settings&tab=checkout&section=vella') . '" title="' . __('View VellaPay Settings', 'woo-vella-pay') . '">' . __('Settings', 'woo-vella-pay') . '</a>',
 	);
 
 	return array_merge($settings_link, $links);

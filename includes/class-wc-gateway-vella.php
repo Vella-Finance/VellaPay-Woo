@@ -309,7 +309,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 
 		// Check required fields.
 		if (!($this->public_key)) {
-			echo '<div class="error"><p>' . sprintf(__('Please enter your Vella merchant details <a href="%s">here</a> to be able to use the VellaPay WooCommerce plugin.', 'woo-vella-pay'), admin_url('admin.php?page=wc-settings&tab=checkout&section=vella')) . '</p></div>';
+			echo '<div class="error"><p>' . sprintf(__('Please enter your Vella merchant details <a href="%s">here</a> to be able to use the VellaPay plugin.', 'woo-vella-pay'), admin_url('admin.php?page=wc-settings&tab=checkout&section=vella')) . '</p></div>';
 			return;
 		}
 	}
