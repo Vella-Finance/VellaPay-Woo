@@ -1,11 +1,11 @@
 === VellaPay Payment Gateway ===
-Contributors: fujah
+Contributors: Gabriel Ajenifuja
 Donate link: https://me.vella.finance/link/fujahgabriel
 Tags: vella, vella pay, woocommerce, payment gateway, fujah plugins, crypto, ghana, kenya, nigeria, south africa, naira, cedi, btc,usdt,usdc, mastercard, visa
-Requires at least: 4.7
-Tested up to: 5.8
-Stable tag: 5.7.3
-Requires PHP: 5.6
+Requires at least: 5.2 or higher
+Tested up to: 6.0
+Stable tag: 0.1.0
+Requires PHP: 5.6.20 or higher
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,7 +95,7 @@ If you do not find Vella on the Payment method options, please go through the se
 
 == Changelog ==
 
-= 1.0.0 - June 3, 2022 =
+= 0.1.0 - June 3, 2022 =
 *   First release
 
 

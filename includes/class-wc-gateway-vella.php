@@ -234,15 +234,11 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 		$this->meta_shipping_address = $this->get_option('meta_shipping_address') === 'yes' ? true : false;
 		$this->meta_products         = $this->get_option('meta_products') === 'yes' ? true : false;
 
-		//$this->public_key = $this->testmode ? $this->test_public_test : $this->live_public_key;
-		//$this->secret_key = $this->testmode ? $this->test_secret_key : $this->live_secret_key;
-
 		$this->public_key = $this->testmode ? $this->test_key : $this->live_key;
 		$this->notify_url         = WC()->api_request_url('WC_Gateway_Vella');
 		// Hooks
 		add_action('wp_enqueue_scripts', array($this, 'payment_scripts'));
 		add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
-
 		add_action('admin_notices', array($this, 'admin_notices'));
 		add_action(
 			'woocommerce_update_options_payment_gateways_' . $this->id,
@@ -288,11 +284,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 	public function get_icon()
 	{
 
-		//$base_location = wc_get_base_location();
-
-
-		$icon = '<img src="https://res.cloudinary.com/dm9otxkot/image/upload/v1654070103/Group_1000000862_tsbflc.svg" class="vella-icon" alt="Vella Payment Options" />';
-
+		$icon = '<img src="' . WC_HTTPS::force_https_url(plugins_url('images/vella-pay-icon.png', WC_VELLA_PAY_MAIN_FILE)) . '" alt="Vella Payment Options" />';
 
 		return apply_filters('woocommerce_gateway_icon', $icon, $this->id);
 	}
@@ -409,7 +401,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 				'default'     => 'yes',
 				'desc_tip'    => true,
 			),
-			
+
 			'currency'                     => array(
 				'title'       => __('Currency', 'woo-vella-pay'),
 				'type'        => 'select',
@@ -442,7 +434,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 				'description' => __('Enter your Vella Tag here.', 'woo-vella-pay'),
 				'default'     => '',
 			),
-			
+
 			'autocomplete_order'               => array(
 				'title'       => __('Autocomplete Order After Payment', 'woo-vella-pay'),
 				'label'       => __('Autocomplete Order', 'woo-vella-pay'),
@@ -552,28 +544,17 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 	{
 
 		if ($this->description) {
-			echo wpautop(wptexturize($this->description));
+			echo esc_textarea($this->description);
 		}
 
 		if (!is_ssl()) {
 			return;
-		} 
+		}
 
 		if ($this->supports('tokenization') && is_checkout() && $this->saved_cards && is_user_logged_in()) {
 			$this->tokenization_script();
 			//$this->saved_payment_methods();
 			$this->save_payment_method_checkbox();
-		}
-	}
-
-	public function add_vella_module($tag, $handle, $src)
-	{
-		if ('vella-module' !== $handle) {
-
-			$tag = '<script type="module" src="' . $src . '"></script>';
-			return $tag;
-		} else {
-			return $tag;
 		}
 	}
 
@@ -591,7 +572,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 			return;
 		}
 
-		$order_key = urldecode($_GET['key']);
+		$order_key = sanitize_text_field($_GET['key']);
 		$order_id  = absint(get_query_var('order-pay'));
 
 		$order = wc_get_order($order_id);
@@ -607,15 +588,15 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 
 		$suffix = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
 
+
+		wp_enqueue_style('vella-css');
+		wp_register_style('vella-css', plugins_url('css/vella.css', WC_VELLA_PAY_MAIN_FILE));
+
 		wp_enqueue_script('jquery');
-		wp_register_style( 'vella-css', plugins_url('css/vella.css', WC_VELLA_PAY_MAIN_FILE) );
-		wp_enqueue_style( 'vella-css' );
+		wp_enqueue_script('wc_vella', plugins_url('js/vella.js', WC_VELLA_PAY_MAIN_FILE), array('jquery'), WC_VELLA_PAY_VERSION, false);
 
-		
-		echo '<script type="module" src="https://checkout.vella.finance/widget/sdk.js"></script>';
-		wp_enqueue_script('wc_vella', plugins_url('js/vella.js', WC_VELLA_PAY_MAIN_FILE));
+		wp_enqueue_script('vella-checkout-handler', 'https://checkout.vella.finance/widget/sdk.js', WC_VELLA_PAY_VERSION, false);
 
-		
 		$vella_params = array(
 			'key' => $this->public_key,
 		);
@@ -719,6 +700,16 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 	}
 
 
+	public function add_type_attribute($tag, $handle, $src)
+	{
+		// if not your script, do nothing and return original $tag
+		if ('vella-checkout-handler' != $handle) {
+			return $tag;
+		}
+		// change the script tag by adding type="module" and return it.
+		$tag = '<script type="module" src="' . esc_url($src) . '"></script>';
+		return $tag;
+	}
 
 	/**
 	 * Load admin scripts.
@@ -729,7 +720,6 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 		if ('woocommerce_page_wc-settings' !== get_current_screen()->id) {
 			return;
 		}
-
 	}
 
 	/**
@@ -776,8 +766,10 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 		echo '<div id="wc-vella-form">';
 		echo '<p>' . __('Thank you for your order, please click the button below to pay with Vella.', 'woo-vella-pay') . '</p>';
 		echo '<div id="vella_form"><form method="post" action="' . WC()->api_request_url('WC_Gateway_Vella') . '" id="vella_order_review" ></form>
-		<button type="button" style="background: none;" id="vella-payment-button"><img src="https://res.cloudinary.com/dm9otxkot/image/upload/v1653698543/Property_1_Vellapay_Property_2_V1_uo9xzf.svg" width="200" alt="Vella Payment Button" /></button>
-		<button type="button" style="background: none; display:none;" id="vella-loading-button">processing...</button>
+				<button type="button" style="background: none;" id="vella-payment-button">
+				<img src="' . WC_HTTPS::force_https_url(plugins_url('images/vella-button-01.svg', WC_VELLA_PAY_MAIN_FILE)) . '" width="200" alt="Vella Payment Button" />
+				</button>
+				<span style="background: none; display:none;" id="vella-loading-button">processing...</span>
 		';
 
 		if (!$this->remove_cancel_order_button) {
@@ -793,16 +785,15 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 	public function verify_vella_transaction()
 	{
 
-		if($this->testmode){
+		if ($this->testmode) {
 			$base_url =  'https://sandbox.vella.finance/api/v1/checkout/transaction/';
-		}else{
+		} else {
 			$base_url =  'https://api.vella.finance/api/v1/checkout/transaction/';
 		}
-		
+
 		if (isset($_REQUEST['vella_txnref'])) {
+			/** clean txnref */
 			$vella_txn_ref = sanitize_text_field($_REQUEST['vella_txnref']);
-			$order_details = explode('_', $vella_txn_ref);
-			$order_id = (int) $order_details[0];
 		} else {
 			$vella_txn_ref = false;
 		}
@@ -810,6 +801,14 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 		@ob_clean();
 
 		if ($vella_txn_ref) {
+
+			/** explode cleaned txn_ref */
+			$order_details = explode('_', $vella_txn_ref);
+
+			$order_id = (int) $order_details[0];
+
+			/** Get order */
+			$order = wc_get_order($order_id);
 
 			$vella_url = $base_url . $vella_txn_ref . '/verify';
 
@@ -830,9 +829,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 
 				if ($vella_response->data->status == "Success" || $vella_response->data->status == "Completed") {
 
-			
-
-					$order = wc_get_order($order_id);
+					
 
 					if (in_array($order->get_status(), array('processing', 'completed', 'on-hold'))) {
 
@@ -871,7 +868,6 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 						wc_add_notice($notice, $notice_type);
 					} else {
 
-
 						$order->payment_complete($vella_ref);
 						$order->add_order_note(sprintf(__('Payment via Vella was successful (Transaction Reference: %s)', 'woo-vella-pay'), $vella_ref));
 
@@ -882,11 +878,7 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 					}
 				} else if ($vella_response->data->status == "Pending") {
 
-					$order_details = explode('_', $_REQUEST['vella_txnref']);
 
-					$order_id = (int) $order_details[0];
-
-					$order = wc_get_order($order_id);
 
 					$order->update_status('on-hold', '');
 
@@ -906,12 +898,6 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 
 					wc_add_notice($notice, $notice_type);
 				} else {
-
-					$order_details = explode('_', $_REQUEST['vella_txnref']);
-
-					$order_id = (int) $order_details[0];
-
-					$order = wc_get_order($order_id);
 
 					$order->update_status('failed', __('Payment was declined by Vella.', 'woo-vella-pay'));
 				}
@@ -1069,7 +1055,6 @@ class WC_Gateway_Vella extends WC_Payment_Gateway_CC
 	 */
 	public function process_refund($order_id, $amount = null, $reason = '')
 	{
-
 	}
 
 	/**

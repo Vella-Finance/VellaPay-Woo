@@ -5,12 +5,12 @@
  * Plugin URI: https://vella.finance
  * Description: Receive payment on your store with VellaPay
  * Version: 0.1.0
- * Author: Gabriel Ajenifuja
- * Author URI: https://fujahgabriel.disha.page/
+ * Author: Vella
+ * Author URI: https://vella.finance/
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
- * WC requires at least: 3.0.0
- * WC tested up to: 5.8
+ * WC requires at least: 5.2 or higher
+ * WC tested up to: 6.0
  * Text Domain: woo-vella-pay
  * Domain Path: /languages
  */
